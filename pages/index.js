@@ -38,7 +38,7 @@ export default function Home() {
 
       <main className={styles.main}>
         {user ?  <><ToDoList todos={todos}></ToDoList>
-        <CreateTodo setTodos={setTodos}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
+          <CreateTodo setTodos={setTodos} user={user}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
 
       </main>
 

@@ -4,13 +4,29 @@ import Image from "next/image";
 import CreateTodo from "../components/CreateTodo";
 import ToDoList from "../components/ToDoList";
 import styles from "../styles/Home.module.css";
+import { auth, googleAuthprovider } from "../lib/firebase"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+/**
+ * TODOs
+ *  Create Users collection
+ *  Create user doc if none exists already for this user
+ *  Create Todos collection for each user
+ *  Create each respective todo
+ */
 
 export default function Home() {
+  const [user, setUser] = useState(auth?.currentUser)
   const [todos, setTodos] = useState({
     id: 1,
     taskName: "Do something today",
     user: "jack",
   });
+
+  async function signInToGoogle() {
+    const person = await signInWithPopup(auth, googleAuthprovider);
+    setUser(person.user)
+  }
 
   return (
     <div className={styles.container}>
@@ -21,8 +37,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <ToDoList todos={todos}></ToDoList>
-        <CreateTodo setTodos={setTodos}></CreateTodo>
+        {user ?  <><ToDoList todos={todos}></ToDoList>
+        <CreateTodo setTodos={setTodos}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
+
       </main>
 
       <footer className={styles.footer}>

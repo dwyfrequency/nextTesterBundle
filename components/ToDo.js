@@ -1,7 +1,7 @@
 import React from "react";
 
-const ToDo = () => {
-  return <div>ToDo</div>;
+const ToDo = (todo) => {
+  return <div>ToDo {JSON.stringify(todo)}</div>;
 };
 
 export default ToDo;

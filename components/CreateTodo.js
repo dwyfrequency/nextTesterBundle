@@ -2,10 +2,10 @@ import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { auth, firestore } from "../lib/firebase";
 
-function CreateTodo({setTodos}) {
+function CreateTodo({ setTodos }) {
   const [taskName, setTaskName] = useState("");
 
-   async function handleSubmit(evt) {
+  async function handleSubmit(evt) {
     evt.preventDefault();
     const todoData = {
       taskName,
@@ -25,7 +25,7 @@ function CreateTodo({setTodos}) {
         <input
           type="text"
           value={taskName}
-          onChange={e => setTaskName(e.target.value)}
+          onChange={(e) => setTaskName(e.target.value)}
         />
       </label>
       <input type="submit" value="Submit" />

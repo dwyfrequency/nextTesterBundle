@@ -8,7 +8,7 @@ import {
   auth,
   firestore,
   googleAuthprovider,
-  postToJSON,
+  todoToJSON,
 } from "../lib/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {
@@ -47,7 +47,7 @@ export async function getServerSideProps() {
     limit(LIMIT)
   );
 
-  const todos = (await getDocs(q)).docs.map(postToJSON);
+  const todos = (await getDocs(q)).docs.map(todoToJSON);
   return {
     props: { todos }, // will be passed to the page component as props
   };

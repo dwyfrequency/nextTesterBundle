@@ -4,9 +4,30 @@ import Image from "next/image";
 import CreateTodo from "../components/CreateTodo";
 import ToDoList from "../components/ToDoList";
 import styles from "../styles/Home.module.css";
-import { auth, firestore, googleAuthprovider, postToJSON } from "../lib/firebase"
+import {
+  auth,
+  firestore,
+  googleAuthprovider,
+  postToJSON,
+} from "../lib/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { collectionGroup, getDocs, limit, orderBy, query } from "firebase/firestore";
+import {
+  collectionGroup,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  Avatar,
+  Button,
+  Container,
+  CssBaseline,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 /**
  * TODOs
@@ -17,11 +38,11 @@ import { collectionGroup, getDocs, limit, orderBy, query } from "firebase/firest
  */
 // Max todos to query per page
 const LIMIT = 2;
+const theme = createTheme();
 
 export async function getServerSideProps() {
   const q = query(
     collectionGroup(firestore, "todos"),
-    // where("published", "==", true),
     orderBy("createdAt", "desc"),
     limit(LIMIT)
   );
@@ -33,12 +54,12 @@ export async function getServerSideProps() {
 }
 
 export default function Home(props) {
-  const [user, setUser] = useState(auth?.currentUser)
+  const [user, setUser] = useState(auth?.currentUser);
   const [todos, setTodos] = useState(props.todos);
 
   async function signInToGoogle() {
     const person = await signInWithPopup(auth, googleAuthprovider);
-    setUser(person.user)
+    setUser(person.user);
   }
 
   return (
@@ -50,9 +71,42 @@ export default function Home(props) {
       </Head>
 
       <main className={styles.main}>
-        {user ?  <><ToDoList todos={todos}></ToDoList>
-          <CreateTodo setTodos={setTodos}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
-
+        {user ? (
+          <>
+            <ToDoList todos={todos}></ToDoList>
+            <CreateTodo setTodos={setTodos}></CreateTodo>
+          </>
+        ) : (
+          <ThemeProvider theme={theme}>
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <Box
+                sx={{
+                  marginTop: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Sign in
+                </Typography>{" "}
+                <Button
+                  onClick={signInToGoogle}
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign In
+                </Button>
+              </Box>
+            </Container>
+          </ThemeProvider>
+        )}
       </main>
 
       <footer className={styles.footer}>

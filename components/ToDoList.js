@@ -1,13 +1,15 @@
 import React from "react";
+import ToDo from "./ToDo";
 
 function ToDoList({ todos }) {
-  console.log(todos);
   return (
     <div>
       <h1>ToDoList</h1>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{JSON.stringify(todo)}</li>
+          <ToDo key={todo.id} todo={todo}>
+            {JSON.stringify(todo)}
+          </ToDo>
         ))}
       </ul>
     </div>

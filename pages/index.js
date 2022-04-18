@@ -101,7 +101,7 @@ export default function Home(props) {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign In
+                  Sign In With Google
                 </Button>
               </Box>
             </Container>

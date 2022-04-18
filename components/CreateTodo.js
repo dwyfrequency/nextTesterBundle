@@ -1,9 +1,11 @@
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { auth, firestore } from "../lib/firebase";
 
 function CreateTodo({ setTodos }) {
   const [taskName, setTaskName] = useState("");
+  const router = useRouter();
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -17,6 +19,8 @@ function CreateTodo({ setTodos }) {
     const uid = auth.currentUser?.uid ?? "";
     const newTodoRef = doc(collection(firestore, "users", uid, "todos"));
     await setDoc(newTodoRef, todoData);
+    setTaskName("");
+    router.push("/");
   }
   return (
     <form onSubmit={handleSubmit}>

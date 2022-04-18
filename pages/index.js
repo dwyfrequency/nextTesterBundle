@@ -40,7 +40,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 const LIMIT = 2;
 const theme = createTheme();
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const q = query(
     collectionGroup(firestore, "todos"),
     orderBy("createdAt", "desc"),
@@ -50,18 +50,20 @@ export async function getServerSideProps() {
   const todos = (await getDocs(q)).docs.map(todoToJSON);
   return {
     props: { todos }, // will be passed to the page component as props
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 10 seconds
+    revalidate: 10, // In seconds
   };
 }
 
 export default function Home(props) {
   const [user, setUser] = useState(auth?.currentUser);
-  const [todos, setTodos] = useState(props.todos);
 
   async function signInToGoogle() {
     const person = await signInWithPopup(auth, googleAuthprovider);
     setUser(person.user);
   }
-
   return (
     <div className={styles.container}>
       <Head>
@@ -73,8 +75,8 @@ export default function Home(props) {
       <main className={styles.main}>
         {user ? (
           <>
-            <ToDoList todos={todos}></ToDoList>
-            <CreateTodo setTodos={setTodos}></CreateTodo>
+            <ToDoList todos={props.todos}></ToDoList>
+            <CreateTodo></CreateTodo>
           </>
         ) : (
           <ThemeProvider theme={theme}>

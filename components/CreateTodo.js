@@ -1,14 +1,22 @@
+import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useState } from "react";
+import { auth, firestore } from "../lib/firebase";
 
-function CreateTodo({setTodos, user}) {
+function CreateTodo({setTodos}) {
   const [taskName, setTaskName] = useState("");
 
-  const handleSubmit = (evt) => {
+   async function handleSubmit(evt) {
     evt.preventDefault();
-    setTodos(prevState => prevState.concat({
+    const todoData = {
       taskName,
-      user,
-    }));
+      username: auth.currentUser?.displayName,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const uid = auth.currentUser?.uid ?? "";
+    const newTodoRef = doc(collection(firestore, "users", uid, "todos"));
+    await setDoc(newTodoRef, todoData);
   }
   return (
     <form onSubmit={handleSubmit}>

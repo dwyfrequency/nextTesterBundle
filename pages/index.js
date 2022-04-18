@@ -4,8 +4,9 @@ import Image from "next/image";
 import CreateTodo from "../components/CreateTodo";
 import ToDoList from "../components/ToDoList";
 import styles from "../styles/Home.module.css";
-import { auth, googleAuthprovider } from "../lib/firebase"
+import { auth, firestore, googleAuthprovider, postToJSON } from "../lib/firebase"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { collectionGroup, getDocs, limit, orderBy, query } from "firebase/firestore";
 
 /**
  * TODOs
@@ -14,14 +15,26 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
  *  Create Todos collection for each user
  *  Create each respective todo
  */
+// Max todos to query per page
+const LIMIT = 2;
 
-export default function Home() {
+export async function getServerSideProps() {
+  const q = query(
+    collectionGroup(firestore, "todos"),
+    // where("published", "==", true),
+    orderBy("createdAt", "desc"),
+    limit(LIMIT)
+  );
+
+  const todos = (await getDocs(q)).docs.map(postToJSON);
+  return {
+    props: { todos }, // will be passed to the page component as props
+  };
+}
+
+export default function Home(props) {
   const [user, setUser] = useState(auth?.currentUser)
-  const [todos, setTodos] = useState({
-    id: 1,
-    taskName: "Do something today",
-    user: "jack",
-  });
+  const [todos, setTodos] = useState(props.todos);
 
   async function signInToGoogle() {
     const person = await signInWithPopup(auth, googleAuthprovider);
@@ -38,7 +51,7 @@ export default function Home() {
 
       <main className={styles.main}>
         {user ?  <><ToDoList todos={todos}></ToDoList>
-          <CreateTodo setTodos={setTodos} user={user}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
+          <CreateTodo setTodos={setTodos}></CreateTodo></> : <button onClick={signInToGoogle}>Sign in with Google</button>}
 
       </main>
 

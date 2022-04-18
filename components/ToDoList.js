@@ -1,7 +1,7 @@
 import React from "react";
 
-function ToDoList() {
-  return <div>ToDoList</div>;
+function ToDoList({todos}) {
+  return <div>ToDoList { JSON.stringify(todos) }</div>;
 }
 
 export default ToDoList;
